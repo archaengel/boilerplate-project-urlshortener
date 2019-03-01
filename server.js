@@ -31,6 +31,12 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+// testing db connection
+let postUrl = require('./myApp.js').PostUrl;
+app.get('/api/db', (req, res) => {
+  res.send(postUrl());
+})
+
 
 app.listen(port, function () {
   console.log('Node.js listening ...');
