@@ -3,7 +3,7 @@
 var express = require('express');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
-
+let bodyParser = require('body-parser');
 var cors = require('cors');
 
 var app = express();
@@ -19,6 +19,8 @@ app.use(cors());
 /** this project needs to parse POST bodies **/
 // you should mount the body-parser here
 
+app.use(bodyParser.urlencoded({extended: false}));
+
 app.use('/public', express.static(process.cwd() + '/public'));
 
 app.get('/', function(req, res){
@@ -33,8 +35,8 @@ app.get("/api/hello", function (req, res) {
 
 // testing db connection
 let postUrl = require('./myApp.js').PostUrl;
-app.get('/api/db/:url?', (req, res) => {
-  postUrl(req.params.url, (err, doc) => {
+app.post('/api/shorturl/new/', (req, res) => {
+  postUrl(req.body.url, (err, doc) => {
     if (err) {
     console.log(err)
     } else {
@@ -44,6 +46,18 @@ app.get('/api/db/:url?', (req, res) => {
   });
 })
 
+// get redirected
+let getShortUrl = require('./myApp.js').GetShortUrl
+app.get('/api/shorturl/:short_url?', (req, res) => {
+  getShortUrl(req.params.short_url, (err, doc) => {
+    err ?
+    console.log(err) :
+    console.log(doc)
+    typeof doc === "string" ?
+    res.redirect(doc) :
+    res.json(doc)
+  })
+})
 
 app.listen(port, function () {
   console.log('Node.js listening ...');
