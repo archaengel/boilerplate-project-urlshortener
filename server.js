@@ -33,8 +33,15 @@ app.get("/api/hello", function (req, res) {
 
 // testing db connection
 let postUrl = require('./myApp.js').PostUrl;
-app.get('/api/db', (req, res) => {
-  res.send(postUrl());
+app.get('/api/db/:url?', (req, res) => {
+  postUrl(req.params.url, (err, doc) => {
+    if (err) {
+    console.log(err)
+    } else {
+      console.log(doc);
+      res.json(doc);
+    }
+  });
 })
 
 
